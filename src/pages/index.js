@@ -2,11 +2,21 @@
 import Head from "next/head";
 import useSWR from 'swr';
 import styles from "@/styles/Home.module.css";
-import Image from 'next/image'
 
 export default function Home() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
   const { data } = useSWR('/api/paintings', fetcher);
+
+  const poll = (name) => {
+    fetch("/api/poll", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    })
+  }
 
   return (
     <>
@@ -24,7 +34,7 @@ export default function Home() {
             <div className={`${styles.section}`}>
               <h2>{key}</h2>
               {
-                value && value.map(imgPath => <img src={imgPath} alt="" />)
+                value && value.map(imgPath => <img src={imgPath} width="200" onClick={_e => poll(imgPath)} alt="" />)
               }
             </div>
           )
