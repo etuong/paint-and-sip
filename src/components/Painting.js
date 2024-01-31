@@ -1,8 +1,7 @@
 import React from 'react';
 import styles from "@/styles/Painting.module.css";
 
-const Painting = ({ imgPath }) => {
-  const [showOverlay, setShowOverlay] = React.useState(false);
+const Painting = ({ imgPath, onShow, showOverlay }) => {
   const [vote, setVote] = React.useState(0);
 
   const poll = (int) => {
@@ -14,18 +13,18 @@ const Painting = ({ imgPath }) => {
       },
       body: JSON.stringify({ "name": imgPath, "int": int })
     })
-    setShowOverlay(false);
+    onShow(undefined);
   }
 
   const showMeta = () => {
     fetch(`/api/painting?name=${imgPath}`)
       .then(response => response.json())
       .then(data => {
-        if (data?.painting?.vote) {
+        if (data?.painting) {
           setVote(data?.painting?.vote)
         }
       })
-    setShowOverlay(true);
+    onShow(imgPath);
   }
 
   return (

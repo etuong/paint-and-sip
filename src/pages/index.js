@@ -1,12 +1,15 @@
 
+import React from 'react';
 import Head from "next/head";
 import useSWR from 'swr';
+import useSWRImmutable from 'swr/immutable'
 import styles from "@/styles/Home.module.css";
 import Painting from "@/components/Painting";
 
 export default function Home() {
+  const [currentPainting, setCurrentPainting] = React.useState();
   const fetcher = (url) => fetch(url).then((res) => res.json());
-  const { data } = useSWR('/api/paintings', fetcher);
+  const { data } = useSWRImmutable('/api/paintings', fetcher);
   const { data: votes } = useSWR('/api/selection', fetcher);
 
   return (
@@ -34,7 +37,12 @@ export default function Home() {
               <div className={`${styles.section}`}>
                 <h2>{key}</h2>
                 {
-                  value && value.map(imgPath => <Painting key={imgPath} imgPath={imgPath} />)
+                  value && value.map(imgPath =>
+                    <Painting
+                      key={imgPath}
+                      showOverlay={currentPainting === imgPath}
+                      onShow={(painting) => setCurrentPainting(painting)}
+                      imgPath={imgPath} />)
                 }
               </div>
             )
