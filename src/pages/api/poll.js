@@ -6,12 +6,15 @@ export default async function handler(req, res) {
     await connectDB()
 
     const { name } = req.body;
-    let exist = await Painting.findOne({ name: name });
+    console.log(name);
+    const exist = await Painting.findOne({ name: name });
     if (exist) {
+      console.log("found, incrementing")
       await Painting.findOneAndUpdate({ name: name }, { $inc: { 'vote': 1 } }).exec();
     } else {
+      console.log("not found, saving")
       const person = new Painting({
-        name,
+        name: name,
         vote: 1,
       })
       await person.save()
