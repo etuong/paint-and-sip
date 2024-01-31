@@ -109,3 +109,8 @@ a {
 img:hover {
   filter: contrast(140%);
 }
+
+section {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

@@ -5,14 +5,14 @@ const Painting = ({ imgPath }) => {
   const [showOverlay, setShowOverlay] = React.useState(false);
   const [vote, setVote] = React.useState(0);
 
-  const poll = () => {
+  const poll = (int) => {
     fetch("/api/poll", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "name": imgPath })
+      body: JSON.stringify({ "name": imgPath, "int": int })
     })
     setShowOverlay(false);
   }
@@ -20,7 +20,11 @@ const Painting = ({ imgPath }) => {
   const showMeta = () => {
     fetch(`/api/painting?name=${imgPath}`)
       .then(response => response.json())
-      .then(data => setVote(data?.painting?.vote || 0))
+      .then(data => {
+        if (data?.painting?.vote) {
+          setVote(data?.painting?.vote)
+        }
+      })
     setShowOverlay(true);
   }
 
@@ -28,10 +32,10 @@ const Painting = ({ imgPath }) => {
     <>
       {showOverlay ? <div className={`${styles.container}`}>
         <h3>Current Vote: {vote}</h3>
-        <span onClick={_e => poll()} className={`${styles.emoji}`}>👍</span>
-        <span onClick={_e => poll()} className={`${styles.emoji}`}>👎</span>
+        <span onClick={_e => poll(1)} className={`${styles.emoji}`}>👍</span>
+        <span onClick={_e => poll(-1)} className={`${styles.emoji}`}>👎</span>
       </div> :
-        <img src={imgPath} width="200" alt="" onClick={_e => showMeta()} />}
+        <img src={imgPath} width="150" alt="" onClick={_e => showMeta()} />}
     </>
   )
 }

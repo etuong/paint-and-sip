@@ -7,6 +7,7 @@ import Painting from "@/components/Painting";
 export default function Home() {
   const fetcher = (url) => fetch(url).then((res) => res.json());
   const { data } = useSWR('/api/paintings', fetcher);
+  const { data: votes } = useSWR('/api/selection', fetcher);
 
   return (
     <>
@@ -18,17 +19,27 @@ export default function Home() {
       </Head>
       <main className={`${styles.main}`}>
         <h1>1.5 Gen Asians Meetup - Paint & Sip</h1>
-        {!data && "Loading..."}
-        {data && Object.entries(data).map(([key, value], i) => {
-          return (
-            <div className={`${styles.section}`}>
-              <h2>{key}</h2>
-              {
-                value && value.map(imgPath => <Painting key={imgPath} imgPath={imgPath} />)
-              }
-            </div>
-          )
-        })}
+        <section>
+          <h2>The Current Top Two Selections Are</h2>
+          {!votes && "Loading votes..."}
+          {votes && votes.votes.map(vote => {
+            return (
+              <img key={vote.name + vote.vote} width="240" src={vote.name} style={{ margin: "5px", border: "10px solid white" }} />)
+          })}
+        </section>
+        <section>
+          {!data && "Loading paintings..."}
+          {data && Object.entries(data).map(([key, value], i) => {
+            return (
+              <div className={`${styles.section}`}>
+                <h2>{key}</h2>
+                {
+                  value && value.map(imgPath => <Painting key={imgPath} imgPath={imgPath} />)
+                }
+              </div>
+            )
+          })}
+        </section>
       </main>
     </>
   );

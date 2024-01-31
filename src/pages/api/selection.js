@@ -3,7 +3,6 @@ import connectDB from "../lib/connectDB"
 
 export default async function handler(req, res) {
   await connectDB()
-  const { name } = req.query
-  const painting = await Painting.findOne({ name: name });
-  res.status(200).json({ painting: painting })
+  const votes = await Painting.find().sort({ vote: -1 }).limit(2);
+  res.status(200).json({ votes: votes })
 }
